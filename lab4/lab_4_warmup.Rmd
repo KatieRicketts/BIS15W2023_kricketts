@@ -1,0 +1,45 @@
+---
+title: "lab_4_warmup"
+output: html_document
+date: "2023-01-19"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#load the tidyverse package
+```{r message=FALSE, warning=FALSE}
+library("tidyverse")
+```
+
+#load palmerpenguins package
+```{r}
+library("palmerpenguins")
+```
+
+```{r}
+summary(penguins)
+```
+
+
+#dimensions?
+```{r}
+dim(penguins)
+```
+
+#variable names?
+```{r}
+names(penguins)
+```
+
+#how many individuals on each island?
+```{r}
+table(penguins$island)
+```
+
+#mean body mass for all individuals
+```{r}
+mean(penguins$body_mass_g, na.rm=T)
+```
+
