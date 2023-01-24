@@ -1,0 +1,59 @@
+---
+title: "lab 5 warm up"
+output: html_document
+date: "2023-01-24"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+#load tidyverse
+```{r message=FALSE, warning=FALSE}
+library("tidyverse")
+```
+
+
+#load bison data
+```{r}
+bison <- readr::read_csv("data/bison.csv")
+```
+
+#dimensions and structure
+```{r}
+dim(bison)
+```
+
+```{r}
+str(bison)
+```
+
+#code, sex, weight, year of birth
+```{r}
+glimpse(bison)
+```
+```{r}
+bison_new <- select(bison, animal_code, animal_sex, animal_weight, animal_yob)
+```
+
+#only 1980-1990
+```{r}
+bison_yob <- filter(bison_new, animal_yob>=1980 & animal_yob<=1990)
+```
+
+#how many male and female btwn 1980-1990
+```{r}
+table(bison_yob$animal_sex)
+```
+
+#in 1980-1990 were m or f larger on avg
+```{r}
+bison_m <- filter(bison_yob, animal_sex=="M")
+bison_f <- filter(bison_yob, animal_sex=="F")
+```
+```{r}
+mean(bison_m$animal_weight)
+```
+```{r}
+mean(bison_f$animal_weight)
+```
+m are larger on avg
