@@ -1,0 +1,102 @@
+---
+title: "lab_6_warmup"
+output: html_document
+date: "2023-01-26"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load the tidyverse
+```{r message=FALSE, warning=FALSE}
+library("tidyverse")
+library("janitor")
+```
+
+#open the data
+```{r}
+ecosphere <- readr::read_csv("data/ecs21351-sup-0003-SupplementS1.csv", skip=2)
+```
+
+#clean the names
+```{r}
+names(ecosphere)
+```
+```{r}
+ecosphere <-
+  janitor::clean_names(ecosphere)
+names(ecosphere)
+```
+```{r}
+# ecosphere <- ecosphere %>% clean_names
+```
+
+
+#explore the data with a function of choice
+```{r}
+glimpse(ecosphere)
+```
+
+
+#are there more veggie, omni, insectivore, or nectar feeders in the data?
+```{r}
+ecosphere %>% 
+  tabyl(diet) %>% 
+  arrange(desc(n))
+```
+
+#changing the characters into factors makes tabyl start acting funky
+```{r}
+ecosphere %>% 
+  mutate_if(is.character, as.factor)
+```
+```{r}
+levels(ecosphere$diet)
+```
+
+```{r}
+veggie <- ecosphere %>% 
+  filter(diet == "Vegetation")
+```
+```{r}
+omni <- ecosphere %>% 
+  filter(diet == "Omnivore")
+```
+```{r}
+insectivore <- ecosphere %>% 
+  filter(diet == "Invertebrates")
+```
+```{r}
+nectar <- ecosphere %>% 
+  filter(diet == "Nectar")
+```
+
+```{r}
+nrow(veggie)
+```
+```{r}
+nrow(omni)
+```
+```{r}
+nrow(insectivore)
+```
+```{r}
+nrow(nectar)
+```
+there are more insectivores
+
+
+#which families are veggie?
+```{r}
+veggie %>% 
+  select(family)
+```
+```{r}
+ecosphere %>% 
+  filter(diet == "Vegetation") %>% 
+  select(family, diet) %>% 
+  tabyl(diet)
+```
+
+

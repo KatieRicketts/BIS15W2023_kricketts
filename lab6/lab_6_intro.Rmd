@@ -1,0 +1,43 @@
+---
+title: "Lab 6 Intro"
+date: "`r Sys.Date()`"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library("jpeg")
+```
+
+## Setup
+1. Login to the lab computer (please don't use your personal computer).  
+2. Navigate to github.com and login.   
+2. Use GitHub desktop to clone your repository to the desktop.   
+5. Copy the class repository to the desktop (https://github.com/jmledford3115/datascibiol).  
+6. Copy the files for today's lab from the class repository and paste them into **your** repository.  
+7. Open today's lab in RStudio.  
+
+## Review from last time
+### *With a partner, discuss the following questions*
+1. What is a pipe? Why are they useful in R?
+feed the output from one function into another function
+
+2. What is the shortcut for making a pipe?
+%>%  command+shift+M
+
+3. What is the difference between `select`, `filter`, and `mutate`?
+select = pulls out a column
+filter = pulls out a row
+mutate = creates a column
+
+4. What are the logistics of midterm 1?
+spend the first few minutes working alone, then work together
+35 total points
+can use any resource besides github
+
+### Warm-up
+1. Open the data `ecs21351-sup-0003-SupplementS1.csv`
+2. Clean the names of the variables
+3. Explore the data using a function of your choice
+4. Are there more veggie, omni, insecivore, or nectar feeders in the data?
+5. Which families are Veggie?
