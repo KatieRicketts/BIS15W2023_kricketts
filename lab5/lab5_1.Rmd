@@ -99,7 +99,7 @@ fish_subset <- fish %>%
   filter(radii_length_mm >= 2 & radii_length_mm <= 4)
 fish_subset
 ```
-unsure if the between() command will inlcude the bounds or not...
+unsure if the between() command will include the bounds or not...
 
 
 

@@ -1,0 +1,426 @@
+---
+title: "commands_cheat_sheet"
+author: "Katie Ricketts"
+date: "2023-01-30"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Tidyverse Library
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(janitor)
+library(skimr)
+```
+
+
+## Loading Data
+```{r}
+object <- readr::read_csv(file = "data/filename.csv")
+```
+```{r}
+?data_name
+#get more info about the data
+```
+
+
+## Working Directory
+```{r}
+getwd()
+```
+
+
+## Objects
+```{r}
+object1 <- 1
+object2 <- 2
+```
+```{r}
+sum(object1, object2)
+```
+
+
+## Vectors
+```{r}
+vector <- c(1, 2, 3, 4)
+#c stands for concatenate
+my_vector_sequence <- c(1:100)
+#creates a vector that has the sequence of numbers from 1 to 100
+```
+```{r}
+mean(vector)
+median(vector)
+sd(vector)
+```
+```{r}
+vector[3]
+vector[vector<4]
+#pulls out the value in the vector at that position
+```
+
+
+## Classes of Data
+```{r}
+my_numeric <- 42
+my_integer <- 2L #adding an L automatically denotes an integer
+my_character <- "universe" #characters always have quotes
+my_logical <- FALSE
+my_complex <- 2+4i
+```
+```{r}
+class(my_numeric)
+#tells you what class of data it is
+```
+```{r}
+is.integer(my_numeric)
+#is my_numeric an integer?
+
+my_integer <- as.integer(my_numeric)
+#create a new object specified as an integer
+```
+```{r}
+#the class name "dbl" means that the value is a type of numeric (double precision floating point)
+```
+
+
+## NAs
+```{r}
+is.na(object)
+anyNA(object)
+```
+```{r}
+na.rm=T
+#to take out NAs
+#put this piece inside the command you are trying to use
+```
+```{r}
+filter(!is.na(variable1))
+#filters out the NA values
+```
+
+
+
+## Data Matrices
+```{r}
+#lab 2.2 for more details
+matrix_name <- matrix(vector, nrow=4, byrow=T)
+#use vectors and c() to build a data matrix
+```
+```{r}
+colnames(matrix_name) <- character_string_vector1
+row_names(matrix_name) <- character_string_vector2
+#naming the columns and rows
+```
+```{r}
+rowSums(matrix_name)
+#calculations
+```
+```{r}
+cbind(matrix_name, new_column_vector)
+rbind(matric_name, new_row_vector)
+#adding colummns and rows
+```
+```{r}
+matrix_name[1,2]
+#pull out values: [row, column]
+matrix_name[1:4]
+#pull out elements 1-4 in column 1
+matrix_name[ ,2]
+#pull out the entire second column
+```
+
+
+## Data Frames
+```{r}
+#rows are observations
+#columns are variables
+#cells are values
+```
+```{r}
+data_frame_name <- data.frame(vector1, vector2, vector3)
+#building a data frame
+```
+```{r}
+View(data_frame_name)
+#pulls up the data frame in another tab
+#or you can click on the data frame in the environment panel
+```
+```{r}
+head(data_frame_name, n=10)
+#print the first 10 rows of the data frame
+tail(data_frame_name, n=10)
+#print the last 10 rows of the data frame
+data_frame_name[1, 3]
+#same operation as with data matrices
+data_frame_name$column_name
+#calls upon the entire column within the data frame
+```
+```{r}
+data_frame_name <- rbind(data_frame_name, new_row)
+#add a new row
+data_frame_name$new_column_name <- c(value1, value2, value2)
+#add a new column
+```
+```{r}
+table(data_frame_name$variable)
+#produces a count of the number of observations in that variable
+```
+```{r}
+filtered_data <- filter(data_frame_name, variable<=10)
+```
+#### Renaming
+```{r}
+data_frame_renamed <- rename(data_frame_name, variable1 = "Variable 1", 
+                                              variable2 = "Variable.2", 
+                                              variable3 = "VAR 3")
+```
+```{r}
+data_frame_name <- select_all(data_frame_name, tolower)
+#make all names lowercase
+```
+```{r}
+select_all(data_frame_name, ~str_replace(., " ", "_"))
+#get rid of "." "," and spaces
+#the last thing listed in the replace() is what the others are being replaced with
+```
+#### Summary Functions
+```{r}
+names(data_frame_name)
+#column names
+dim(data_frame_name)
+#dimensions
+str(data_frame_name)
+#structure
+glimpse(data_frame_name)
+summary(data_frame_name)
+#overview of the data frame
+nrow(data_frame_name)
+#number of rows
+ncol(data_frame_name)
+#number of columns
+```
+#### Factors
+```{r}
+data_frame_name$variable <- as.factor(data_frame_name$variable)
+#turn the variable class into a factor
+class(data_frame_name$variable)
+#check the class
+levels(data_frame_name$variable)
+#see the list of possible levels of the factor
+```
+#### Saving the Data Frame
+```{r}
+write.csv(data_frame_name, "data_frame_name.csv", row.names = FALSE)
+#saving the data
+#write the data frame to a csv file
+#the row.names=F keeps the row numbers from printing out
+```
+
+
+## dplyr
+#### select
+```{r}
+select(data_frame_name, variable1, variable2, variable3)
+#pull out columns of interest (select has a c)
+select(data_frame_name, variable1:variable3)
+#pull out a range of columns
+select(data_frame_name, -variable4)
+#pull out every column except variable 4
+select(data_frame_name, contains("something"))
+#pull out the columns that contain "something" in their names
+#can also be done with:
+  # starts_with()
+  # ends_with()
+  # matches() --> columns that match a regular expression
+  # one_of() --> columns names that are from a group of names
+select(data_frame_name, matches("a.+er"))
+#pulls out every column that contains an "a" and ends with "er"
+select(data_frame_name, is.character)
+#pulls out data that is a character
+select_if(data_frame_name, ~!is.numeric(.))
+#pulls out the columns that are NOT numeric
+#the ! means the opposite of whatever follows (above, it returns TRUE if the value is not numeric)
+#sometimes need the ~! sometimes need just !
+# "." tells R too look at all of the values in every cell of the data frame
+# "~" tells R to just look at the variables (columns)
+```
+#### filter
+```{r}
+filter(data_frame_name, variable1 == "character value")
+#pull out rows of interest (filter has an r)
+#allows all of the expected operators; i.e. >, >=, <, <=, != (not equal), and == (equal)
+filter(data_frame_name, variable1 %in% c(1, 10))
+#all rows with a variable1 value between 1 and 10
+filter(data_frame_name, between(variable2, 3, 14))
+#all rows with variable2 value between 3 and 14
+filter(data_frame_name, near(variable3, 4, tol = 0.5))
+#all rows with variable3 value within 0.5 units of 4
+filter(data_frame_name, variable1 == "character value" & variable2 > 100)
+#only the rows that satisfy both conditions
+#you can add as many &s as you want, as long as they don't conflict
+filter(data_frame_name, variable1 == "character value" | variable2 > 100)
+#this "|" acts as "or"
+#all rows that satisfy either condition
+filter(data_frame_name, xor(condition1, condition2))
+#the rows where only one of the condidions is met, and not both
+```
+#### count
+```{r}
+data_frame_name %>% 
+  count(variable1, variable2, sort = T) # sort=T will arrange in descending order
+#provides a count of how many observations are in a column
+#acts like a combination of group_by() and n()
+```
+
+
+## Pipes
+```{r}
+#feed the output of one command into the input of the next command
+#the keystroke shortcut is command+shift+M
+```
+```{r}
+data_frame_name %>% 
+  mutate_if(is.character, as.factor)
+#turn all characters into factors
+data_frame_name %>% 
+  select(variable1, variable2) %>% 
+  filter(variable1 == "character value") %>% 
+  arrange(variable1)
+#combines select and filter
+#the order of commands matters (ex: you can't filter by variable3 if you have already removed variable3)
+#arrange will sort the results in ascending order according to the specified variable
+#in order to sort in descending order, use arrange(desc(variable1))
+```
+```{r}
+data_frame_name %>% 
+  filter(variable1 == "character value") %>% 
+  select_if(all_vars(.=="TRUE"))
+#this will only show the columns that have a value of TRUE for this specific observation (row)
+```
+#### Mutate
+```{r}
+fish %>% 
+  mutate(variable_new = variable1*10) %>% 
+  select(variable1, variable_new)
+#creates a new column from existing columns
+```
+```{r}
+data_frame_name %>%
+  mutate_all(tolower)
+#make all entries lowercase
+data_frame_name %>% 
+  mutate(across(c("variable1", "variable2"), tolower))
+#specifies individual columns
+```
+#### ifelse
+```{r}
+mammals %>% 
+  mutate(variable_new = ifelse(variable1 == -999.00, NA, variable1))
+#make a new column, if there is a -999.00 then put NA, and if not -999.00 then transpose the value from the original column
+#ifelse() works a little bit like a search and replace
+```
+
+
+## Janitor
+```{r}
+data_frame_name <- janitor::clean_names(data_frame_name)
+```
+```{r}
+tabyl(data_frame_name, variable1)
+#produces a count of each value within the variable, as well as the percentages
+#can also be written in a pipe:
+data_frame_name %>%
+ tabyl(variable1)
+```
+
+
+## skimr
+```{r}
+skim(variable1)
+#provides a data frame with many statistical analyses on that variable
+```
+```{r}
+hist(variable1)
+#produces a histogram of the variable
+```
+#### summarize
+```{r}
+#or summarise will work too
+#produces summary statistics for a given variable in a data frame
+```
+```{r}
+data_frame_name %>% 
+  summarize(mean_variable1 = mean(variable1),
+            min_variable1 = min(variable1),
+            max_variable1 = max(variable1),
+            sd_variable1 = sd(variable1),
+            total = n())
+#produce the mean, min, max, standard deviation, and total number of values of variable1
+data_frame_name %>% 
+  summarise(n_variable2=n_distinct(variable2))
+#produces the number of distinct observation values in variable2
+#n_distinct can also be run on its own:
+n_distinct(data_frame_name$variable2)
+```
+```{r}
+#other useful summary statistics: sd(), min(), max(), median(), sum(), n() (returns the length of a column), first() (returns first value in a column), last() (returns last value in a column) and n_distinct() (number of distinct values in a column)
+```
+```{r}
+data_frame_name %>%
+  group_by(variable1) %>% #we are grouping by variable1, a categorical variable
+  summarize(min_variable2 = min(variable2),
+            max_variable2 = max(variable2),
+            mean_variable2 = mean(variable2),
+            total=n())
+#outputs the min, max, mean and total for each group within variable1
+```
+###### across
+```{r}
+data_frame_name %>%
+  summarize(across(c(variable1, variable2, variable3), n_distinct))
+#provides the n_distinct() for all three of the variables listed inside the across(c())
+```
+```{r}
+data_frame_name %>%
+  summarize(across(contains("mm"), mean, na.rm=T))
+#provides the mean for all variables with "mm" and doesn't include NAs
+#helpful for continuous variables
+```
+```{r}
+data_frame_name %>%
+  summarise_all(mean, na.rm=T)
+#summarize across all variables
+```
+```{r}
+data_frame_name %>%
+  summarise(across(!c(variable4, variable5, variable6), 
+                   mean, na.rm=T))
+#summarize across all variables except variable4, variable5, and variable6
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
