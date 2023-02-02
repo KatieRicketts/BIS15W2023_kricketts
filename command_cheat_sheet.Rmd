@@ -406,6 +406,13 @@ data_frame_name %>%
 
 
 
+```{r}
+range(fisheries_new$year)
+```
+```{r}
+fisheries_new %>% 
+  filter(between(year, 2008, 2012))
+```
 
 
 
