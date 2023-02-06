@@ -417,6 +417,13 @@ fisheries_new %>%
 
 
 
+```{r}
+read_csv(file = "data/amniota.csv", na = c("-999"))
+```
+```{r}
+amniota <- readr::read_csv("data/amniota.csv") %>%
+  na_if("-999")
+```
 
 
 
