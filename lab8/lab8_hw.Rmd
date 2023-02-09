@@ -119,7 +119,7 @@ sydneybeaches_means %>%
   filter(year == "2018") %>%
   summarize(max_polluted = max(avg_enterococci_cfu_100ml)) %>%
   arrange(desc(max_polluted))
-# The most polluted beach in 2018 was South Maroubra Rockpool
+# The most polluted beach in 2018 was South Maroubra Rockpool.
 ```
 
 
