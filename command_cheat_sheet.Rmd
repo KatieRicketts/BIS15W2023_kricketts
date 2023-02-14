@@ -431,7 +431,10 @@ amniota <- readr::read_csv("data/amniota.csv") %>%
 
 
 
-
+```{r}
+heartrate2 %>% 
+  separate(patient, into= c("patient", "sex"), sep = "_")
+```
 
 
 
