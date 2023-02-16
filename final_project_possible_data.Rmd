@@ -1,0 +1,31 @@
+---
+title: "final project possible data"
+author: "Katie Ricketts"
+date: "2023-02-16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Possible datasets:
+
+Properties of Stars in Milky Way:
+https://www.kaggle.com/datasets/thedevastator/properties-of-stars-in-our-galaxy
+
+Kepler Objects of Interest:
+https://www.kaggle.com/datasets/arashnic/planets
+https://www.kaggle.com/datasets/nasa/kepler-exoplanet-search-results
+
+Exoplanets and Properties:
+https://www.kaggle.com/datasets/shivamb/all-exoplanets-dataset
+
+Asteroids:
+https://www.kaggle.com/datasets/sakhawat18/asteroid-dataset
+https://www.datastro.eu/explore/dataset/orbits-for-near-earth-asteroids-neas/table/?disjunctive.orbit_type&disjunctive.u&sort=last_obs
+
+8 Planets Properties:
+https://www.kaggle.com/datasets/iamsouravbanerjee/planet-dataset 
+
+
