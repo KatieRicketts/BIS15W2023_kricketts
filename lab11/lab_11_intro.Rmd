@@ -1,0 +1,74 @@
+---
+title: "Lab 11 Intro"
+date: "`r Sys.Date()`"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library("jpeg")
+```
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(janitor)
+library(skimr)
+library(naniar)
+library(here)
+```
+
+## Seating & Set-up
+1. Please make sure that you sit next to your group members for the rest of the quarter.
+2. Please set-up your computer as normal.
+
+## Warm-up
+For this warm-up, please use the `heartrate` data. Be sure to label your plots!
+```{r}
+heartrate <- read.csv("data/heartrate.csv")
+```
+```{r}
+glimpse(heartrate)
+```
+```{r}
+names(heartrate)
+```
+```{r}
+heartrate_tidy <- heartrate %>% 
+  pivot_longer(
+    -patient,
+    names_to = "drug",
+    values_to = "heartrate"
+  )
+heartrate_tidy
+```
+
+
+1. Make a plot that compares the heartrate of patients for drug a.
+```{r}
+heartrate_tidy %>% 
+  filter(drug=="a") %>% 
+  ggplot(aes(x=patient, y=heartrate))+
+  geom_col()
+```
+```{r}
+# Ledford's solution:
+heartrate %>% 
+  ggplot(aes(x=patient, y=a, fill=patient))+
+  geom_col()+
+  labs(title="Drug A Heartrates", 
+       x=NULL,  #NULL makes the x-axis label go away
+       y="Heartrate")
+```
+
+
+
+2. Make a plot that compares heartrate (as a range) for each drug.
+```{r}
+heartrate_tidy %>% 
+  ggplot(aes(x=drug, y=heartrate, fill=drug))+
+  geom_boxplot(alpha=0.7)+ #The alpha=0.7 makes the color fill mor opaque
+  labs(title="Heartrate Comparison by Drug", 
+       x="Drug", 
+       y="Heartrate")
+```
+
