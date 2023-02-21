@@ -42,7 +42,7 @@ options(scipen=999) #cancels the use of scientific notation for the session
 For this tutorial, we will use:  
 [Homerange](http://datadryad.org/resource/doi:10.5061/dryad.q5j65/1). The data are from: Tamburello N, Cote IM, Dulvy NK (2015) Energy and the scaling of animal space use. The American Naturalist 186(2):196-211. http://dx.doi.org/10.1086/682070.  
 ```{r message=FALSE, warning=FALSE}
-homerange <- read_csv(here("lab11", "data", "Tamburelloetal_HomeRangeDatabase.csv"))
+homerange <- read_csv(here("/Users/ksricket/Desktop/BIS15W2023_kricketts-main/lab11/data/Tamburelloetal_HomeRangeDatabase.csv"))
 ```
 
 ## ggplot themes
@@ -110,6 +110,7 @@ display.brewer.pal(4,"GnBu")
 ```
 
 The [R Color Brewer](http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3) website is very helpful for getting an idea of the color palettes. To make things easy, use these two guidelines:
+**pay attention to color blindness, this website ^ has a filter for color blind safe**
 
 +`scale_colour_brewer()` is for points  
 +`scale_fill_brewer()` is for fills  
@@ -164,12 +165,33 @@ homerange %>%
 ## Practice
 1. Revisit the relationship between mass and homerange using a scatterplot, but color the points by taxonomic class using a custom color theme.
 ```{r}
-
+names(homerange)
+```
+```{r}
+blue_orange_palatte <- paletteer_d("colorBlindness::Blue2Orange8Steps")
+```
+```{r}
+barplot(rep(1,14), axes=FALSE, col=blue_orange_palatte)
+```
+```{r}
+homerange %>% 
+  ggplot(aes(x=log10.mass, y=log10.hra, color=class))+
+  geom_point()+
+  scale_color_brewer(palette="PRGn")
 ```
 
 2. Build bar plots that show the representation by taxonomic class with carnivores and herbivores. Try using a color theme that matches your scatterplot to keep everything consistent.
 ```{r}
-
+homerange %>% 
+  ggplot(aes(x=trophic.guild, fill=class))+
+  geom_bar(position="dodge")+
+  scale_fill_manual(values=blue_orange_palatte)
+```
+```{r}
+homerange %>% 
+  ggplot(aes(x=trophic.guild, fill=class))+
+  geom_bar(position="dodge")+
+  scale_fill_brewer(palette="Paired")
 ```
 
 ## Faceting
@@ -265,14 +287,23 @@ ecosphere %>%
 ```
 
 ## Practice
-1. Build a faceted plot that shows a distribution of life expectancy by habitat type.
+1. Build a faceted plot that shows a distribution of log10_mass by habitat type.
 ```{r}
-
+names(ecosphere)
+```
+```{r}
+ecosphere %>% 
+  ggplot(aes(x=log10_mass))+
+  geom_density()+
+  facet_grid(.~habitat)
 ```
 
 2. Try the same plot as #1 above, but include life_expectancy~habitat.
 ```{r}
-
+ecosphere %>% 
+  ggplot(aes(x=log10_mass))+
+  geom_density()+
+  facet_grid(life_expectancy~habitat)
 ```
 
 ## That's it, let's take a break!   
