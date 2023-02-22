@@ -1,6 +1,6 @@
 ---
 title: "Lab 11 Homework"
-author: "Please Add Your Name Here"
+author: "Katie Ricketts"
 date: "2023-02-21"
 output:
   html_document: 
@@ -279,6 +279,30 @@ gapminder %>%
 
 **10. Make one plot of your choice that uses faceting!**
 
+```r
+names(gapminder)
+```
+
+```
+## [1] "country"   "continent" "year"      "lifeExp"   "pop"       "gdpPercap"
+```
+
+```r
+gapminder %>% 
+  ggplot(aes(x=pop, y=lifeExp, color=continent))+
+  geom_smooth()+
+  facet_wrap(continent~.)+
+  scale_x_log10()+
+  labs(title = "Life Expectancy Versus Population, By Continent",
+       x = "Population",
+       y = "Life Expectancy")
+```
+
+```
+## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
+```
+
+![](lab11_hw_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
 
 
 ## Push your final code to GitHub!
