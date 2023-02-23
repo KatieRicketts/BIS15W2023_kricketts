@@ -172,13 +172,19 @@ April has the lowest percentage of patients with complications.
 surgery_months_mort %>% 
   ggplot(aes(x=month, y=Yes, fill=month))+
   geom_col()+
-  scale_x_discrete(limits=month.abb)
+  scale_x_discrete(limits=month.abb)+
+  labs(title="Patients with 30 Day Mortality",
+       x="Month",
+       y="Percentage")
 ```
 ```{r}
 surgery_months_comp %>% 
   ggplot(aes(x=month, y=Yes, fill=month))+
   geom_col()+
-  scale_x_discrete(limits=month.abb)
+  scale_x_discrete(limits=month.abb)+
+  labs(title="Patients with Complications",
+       x="Month",
+       y="Percentage")
 ```
 
 
