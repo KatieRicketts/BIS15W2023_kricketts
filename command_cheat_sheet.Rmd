@@ -10,19 +10,26 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-## Tidyverse Library
+## Library
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(janitor)
 library(skimr)
 library(naniar)
 library(here)
+library(gtools)
+library(RColorBrewer)
+library(paletteer)
+library(ggthemes)
 ```
 
 
 ## Loading Data
 ```{r}
 object <- readr::read_csv(file = "data/filename.csv")
+```
+```{r}
+data_frame_name <- read_csv(here("folder", "data_folder", "file_name.csv"))
 ```
 ```{r}
 ?data_name
@@ -33,6 +40,17 @@ object <- readr::read_csv(file = "data/filename.csv")
 ## Working Directory
 ```{r}
 getwd()
+```
+```{r}
+here()
+#this will tell you where you are, and where you opened the file from
+```
+
+
+## Scientific Notation
+```{r}
+options(scipen=999)
+#cancels scientific notation for the session
 ```
 
 
@@ -92,7 +110,11 @@ my_integer <- as.integer(my_numeric)
 ## NAs
 ```{r}
 is.na(object)
+```
+```{r}
 anyNA(object)
+any_na(object)
+#these are interchangable
 ```
 ```{r}
 na.rm=T
@@ -103,7 +125,40 @@ na.rm=T
 filter(!is.na(variable1))
 #filters out the NA values
 ```
-
+```{r}
+data_frame_name %>% 
+  summarize(number_nas = sum(is.na(data_frame_name)))
+#counts the number of NAs in the entire data frame
+data_frame_name %>% 
+  summarize(number_nas = sum(is.na(variable1)))
+#counts the number of NAs within vaiable1
+data_frame_name %>% 
+  summarise_all(~(sum(is.na(.))))
+#counts the number of NAs across all of the variables
+data_frame_name %>% 
+  count(variable1, sort = TRUE)
+#provides a count of each possible value under variable1, including NA as a possible value
+```
+```{r}
+data_frame_name_tidy <- data_frame_name %>% 
+  na_if("-999")
+#replace the value -999 with NA in the entire data frame
+data_frame_name %>%  
+  mutate(new_column = na_if(varible1, "na_value"))
+#creates a new column using the values from variable1 in which "na_value" is replaced with NA
+```
+```{r}
+naniar::miss_var_summary(data_frame_name)
+#provides a table of all of the variables, the number of NAs in each variable, and the percent of NAs in each variable
+```
+```{r}
+data_frame_name <- readr::read_csv("data/data_frame_name.csv") %>%
+  na_if("-999")
+read_csv(file = "data/data_frame_name.csv", na = c("-999"))
+#these two are interchangeable
+#automatically converts all entries of -999 to NA when loading the data
+#only do this if you are already familiar with the data and know what is treated as NA
+```
 
 
 ## Data Matrices
@@ -320,7 +375,7 @@ data_frame_name %>%
 ```
 #### ifelse
 ```{r}
-mammals %>% 
+data_frame_name %>% 
   mutate(variable_new = ifelse(variable1 == -999.00, NA, variable1))
 #make a new column, if there is a -999.00 then put NA, and if not -999.00 then transpose the value from the original column
 #ifelse() works a little bit like a search and replace
@@ -405,6 +460,276 @@ data_frame_name %>%
 ```
 
 
+## tidyr (Lab 8)
+```{r}
+#tidy data:
+#each variable has its own column
+#each observation has its own row
+#each value has its own cell
+```
+#### pivot_longer()
+```{r}
+data_frame_name %>% 
+  pivot_longer(-variable1, #variable1 will not pivot
+               names_to = "new_variable", #makes a new column name for the former variables to be moved to
+               values_to = "var2" #values (from the old variables being moved) moved to a new column titled var2
+               )
+data_frame_name_new <- 
+  data_frame_name %>% 
+  pivot_longer(var8:var76, # a range of columns from var8 to var76
+               names_to = "var_new1",
+               values_to = "var_new2",
+               values_drop_na = TRUE #this will drop the NA's
+               )
+#the variables being pivoted can be specified in a few ways:
+#-c(var1, var2, var3) all variables except var1, var2, and var3 will pivot
+#var4:var7 the range of variables from var4 to var7 will pivot
+#cols = starts_with("prefix") all variables with the prefix will pivot
+data_frame_name %>% 
+   pivot_longer(
+   cols = starts_with("prefix"),
+   names_to = "var_new1",
+   names_prefix = "prefix", #this will remove the prefix from the value in the new column
+   values_to = "var_new2",
+   values_drop_na = TRUE)
+```
+#### pivot_wider()
+```{r}
+#when you have an observation scattered across multiple rows
+```
+```{r}
+data_frame_name %>% 
+  pivot_wider(names_from = "old_variable", 
+              values_from = "value_variable")
+#the observations under old_variable will become new columns
+data_frame_name %>% 
+pivot_wider(names_from = (categorical_var), #new column names come from the categorical_var column
+                values_from = c(value_col1, value_col2)) #values come from two separate columns
+#this will produce a column for each variable within each category
+```
+#### separate 
+```{r}
+data_frame_name %>% 
+  pivot_longer(
+    var1_v1:var3_v3,
+    names_to= c("var_new", "v_new"),
+    names_sep="_",
+    values_to="variable2"
+  )
+#separates the variables into two different new columns
+```
+```{r}
+data_frame_name %>% 
+  separate(variable1, into= c("var1p1", "var1p2"), sep = "_")
+#if values within variable1 contain two values (var1p1_var1p2)
+```
+```{r}
+data_frame_name %>% 
+  transform(variable1 = str_split(variable1, ";")) %>%
+  unnest(variable1)
+#if there is more than one value/observation in a row this will split them into separate rows
+```
+#### unite
+```{r}
+data_frame_name %>% 
+  unite(var1_var2, "var1", "var2", sep = " ")
+#creates a new column that is the combination of two previous columns
+```
+
+
+## ggplot (Lab 9 and 10)
+```{r}
+#plot= data + geom_ + aesthetics
+```
+```{r}
+ggplot(data=data_frame_name, mapping=aes(x=x_variable, y=y_variable))+geom_boxplot()
+#one way to build a ggplot^
+ggplot(data_frame_name, mapping=aes(x=x_variable, y=y_variable))+
+  geom_point()+
+  geom_smooth(method=lm, se=T)
+#geom_smooth creates a line of best fit, method=lm means that it will be a line rather than a curve
+#the shadow around the regression line is the standard error (se=T)
+```
+```{r}
+data_frame_name %>% 
+  ggplot(aes(x=x_variable)) + 
+  geom_bar()
+#don't specify y because bar plots use the count
+#bar plots are good for counts!
+data_frame_name %>% 
+  filter(variable1=="value") %>%
+  ggplot(aes(x=x_variable, y=y_variable))+
+  geom_col()
+#another way to build a bar plot, but specify both x and y
+#you can flip the x and y as well to turn the graph on its side
+data_frame_name %>% 
+  filter(variable1=="value") %>% 
+  ggplot(aes(x=x_variable, y=y_variable))+
+  geom_bar(stat="identity")
+#a third way to build a bar plot with a specified y variable, but using geom_bar rather than geom_col
+#the same plot can be build with geom_col
+```
+```{r}
+#+coord_flip() will flip the x and y variables in the plot
+#+scale_y_log10() will scale the y variable logarithmically (can also be done with the x variable and with different scaling)
+```
+```{r}
+#+geom_jitter() does the same thing as +geom_point() (scatterplot) but it accounts for overplotting/overlap
+```
+#### Aesthetics
+```{r}
+p <- data_frame_name %>% 
+  ggplot(aes(x=x_variable, y=y_variable))
+#you can store the data frame as an object and then eperiment with geoms and aesthetics
+p + geom_point(aes(x=x_var, y=y_var), size=1.75)+
+  labs()+
+  theme()
+#etc etc
+```
+```{r}
+#bar plots:
+geom_bar(position="dodge")
+#position="dodge" will put the bars side-by-side instead of stacking them
+scale_y_continuous(labels = scales::percent)
+#this will scale all the bars to the percent (or proportion)
+```
+```{r}
++labs(title="Title", 
+       x="X-Axis", 
+       y="Y-Axis")
+```
+```{r}
++theme(plot.title=element_text(size=rel(1.25), hjust=0.5))
+#rel() changes the relative size of the title
+#hjust changes the title position
+theme(axis.text.x = element_text(angle = 60, hjust = 1))
+#this will tilt the text labelling each bar so that they are easier to read
+```
+```{r}
+ggplot(aes(x=x_variable, fill=group_variable, size=variable2))
+#fill will color the data in the plot based on the specified variable 
+#use color=group_variable if using a scatter plot/line plot without an area to fill, to do the same thing
+#size will adjust the size of points relative to the specified variable
+ggplot(aes(x=x_variable, y=y_variable, group=categorical_variables))
+#group will make individual plots for each category
+```
+```{r}
+grDevices::colors()
+#a list of all the built-in colors available to choose from
+```
+
+# Lab 11 stuff:
+```{r}
+p+theme_linedraw()+
+  theme(legend.position = "bottom",
+        axis.text.x = element_text(angle = 60, hjust=1))+
+  labs(title = "Observations by Taxon in Homerange Data",
+       x = NULL,
+       y= "n",
+       fill= "Trophic Guild")
+#alters the appearance of the legend
+```
+
+```{r}
+ls("package:ggthemes")[grepl("theme_", ls("package:ggthemes"))]
+#list of the ggthemes available
+```
+```{r}
+p+ theme_igray()+
+  theme(legend.position = "bottom",
+        axis.text.x = element_text(angle = 60, hjust=1))+
+  labs(title = "Observations by Taxon in Homerange Data",
+       x = NULL,
+       y= "n",
+       fill= "Trophic Guild")
+```
+
+```{r}
+?RColorBrewer
+#info about the color brewer
+```
+```{r}
+display.brewer.pal(4,"GnBu")
+```
+```{r}
+#be mindful of color blindness, the website has a filter for color blindness
+# http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3
+```
+```{r}
+# +`scale_colour_brewer()` is for points  
+# +`scale_fill_brewer()` is for fills  
+```
+
+```{r}
+colors <- paletteer::palettes_d_names
+```
+```{r}
+my_palette <- paletteer_d("ggprism::flames")
+```
+```{r}
+barplot(rep(1,14), axes=FALSE, col=my_palette)
+```
+```{r}
+p+scale_fill_manual(values=my_palette)+
+  theme(legend.position = "bottom",
+        axis.text.x = element_text(angle = 60, hjust=1))+
+  labs(title = "Observations by Taxon in Homerange Data",
+       x = NULL,
+       y= "n",
+       fill= "Trophic Guild")
+```
+```{r}
+homerange %>% 
+  ggplot(aes(x = log10.mass, y = log10.hra, color = locomotion)) +
+  geom_point() +
+  xlim(0, 4) +
+  ylim(1, 6)
+#zooms into the specified area on the plot
+```
+
+#### Faceting
+```{r}
++facet_wrap(.~migratory_strategy, ncol=4)
+#creates a ribbon of panels
++facet_grid(migratory_strategy~.)
+#creates a grid of panels
+# a~b
+#a is the rows, b is columns
+```
+```{r}
+ecosphere %>% 
+  ggplot(aes(x=log10_mass))+
+  geom_density()+
+  facet_grid(diet~habitat, scales = "free_y")
+```
+
+
+
+
+
+
+
+
+
+```{r}
+homerange <- homerange %>% 
+             mutate(mass_category = case_when(log10_mass <= 1.75 ~ "small",
+                                              log10_mass > 1.75 & log10_mass <= 2.75 ~ "medium",
+                                              log10_mass > 2.75 ~ "large"))
+#creates a new categorical variable based off of values from an existing variable
+```
+
+
+## gtools
+```{r}
+quartiles <- quantcut(homerange$log10_hra)
+table(quartiles)
+#produces a table of the quartiles of a specific variable within the data
+```
+
+
+
+
 
 
 
@@ -418,26 +743,27 @@ fisheries_new %>%
 
 
 
-
 ```{r}
-read_csv(file = "data/amniota.csv", na = c("-999"))
-```
-```{r}
-amniota <- readr::read_csv("data/amniota.csv") %>%
-  na_if("-999")
+homerange %>% count(taxon, sort=T) #sorts by the number of observations
 ```
 
 
-
-
-
+Here we add a new column of expenditure types, which are stored as rownames above, with `mutate()`. The `USPersonalExpenditures` data also needs to be converted to a data frame before we can use the tidyverse functions, because it comes as a matrix.
 ```{r}
-heartrate2 %>% 
-  separate(patient, into= c("patient", "sex"), sep = "_")
+expenditures <- 
+  USPersonalExpenditure %>% 
+  as_tibble() %>% 
+  mutate(expenditure = rownames(USPersonalExpenditure))
+expenditures
 ```
 
 
 
+8. The column titled `INSTNM` is the institution name. We are only interested in the University of California colleges. Make a new data frame that is restricted to UC institutions. You can remove `Hastings College of Law` and `UC San Francisco` as we are only interested in undergraduate institutions.
+```{r}
+colleges %>% 
+  filter_all(any_vars(str_detect(., pattern = "University of California"))) 
+```
 
 
 

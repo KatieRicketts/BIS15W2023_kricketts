@@ -61,7 +61,7 @@ options(scipen=999) #cancels the use of scientific notation for the session
 Reference: Tamburello N, Cote IM, Dulvy NK (2015) Energy and the scaling of animal space use. The American Naturalist 186(2):196-211. http://dx.doi.org/10.1086/682070.  
 Data: http://datadryad.org/resource/doi:10.5061/dryad.q5j65/1  
 ```{r}
-homerange <- read_csv(here("data", "Tamburelloetal_HomeRangeDatabase.csv"), na = c("", "NA", "\\"))
+homerange <- read_csv(here("lab10", "data", "Tamburelloetal_HomeRangeDatabase.csv"), na = c("", "NA", "\\"))
 ```
 
 ## A few more useful aesthetics
