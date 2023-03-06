@@ -83,12 +83,26 @@ Let's switch to the wolves data. Brandell, Ellen E (2021), Serological dataset a
 ```{r}
 wolves <- read_csv("data/wolves_data/wolves_dataset.csv")
 ```
+```{r}
+glimpse(wolves)
+```
 
 
 6. How many distinct wolf populations are included in this study? Mae a new object that restricts the data to the wolf populations in the lower 48 US states.  
 ```{r}
-
+n_distinct(wolves$pop)
 ```
+```{r}
+wolves$pop <- as.factor(wolves$pop)
+levels(wolves$pop)
+```
+
+```{r}
+wolves_lower48 <- wolves %>% 
+  filter(lat <= 48 & lat >= 27)
+levels(wolves_lower48$pop)
+```
+
 
 
 7. Use the range of the latitude and longitude to build an appropriate bounding box for your map.  
