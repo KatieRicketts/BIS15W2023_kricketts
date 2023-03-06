@@ -59,7 +59,6 @@ bbox_g <- make_bbox(long_g, lat_g, f=0.05)
 ```
 
 
-
 3. Load a map from `stamen` in a terrain style projection and display the map.  
 ```{r}
 map_g <- get_map(bbox_g, maptype = "terrain", source = "stamen")
@@ -93,39 +92,52 @@ glimpse(wolves)
 n_distinct(wolves$pop)
 ```
 ```{r}
-wolves$pop <- as.factor(wolves$pop)
-levels(wolves$pop)
+wolves_lower48 <- wolves %>% 
+  filter(pop=="MT" | pop=="YNP" | pop=="GTNP" | pop=="MEXICAN" | pop=="SNF" | pop=="MI")
+```
+```{r}
+n_distinct(wolves_lower48$pop)
 ```
 
-```{r}
-wolves_lower48 <- wolves %>% 
-  filter(lat <= 48 & lat >= 27)
-levels(wolves_lower48$pop)
-```
 
 
 
 7. Use the range of the latitude and longitude to build an appropriate bounding box for your map.  
 ```{r}
-
+wolves_lower48 %>% 
+  select(lat, long) %>% 
+  summary()
 ```
+```{r}
+lat_w <- c(33.89, 47.75)
+long_w <- c(-110.99, -86.82)
+bbox_w <- make_bbox(long_w, lat_w, f=0.05)
+```
+
 
 
 8.  Load a map from `stamen` in a `terrain-lines` projection and display the map.  
 ```{r}
-
+map_w <- get_map(bbox_w, maptype = "terrain-lines", source = "stamen")
 ```
+```{r}
+ggmap(map_w)
+```
+
 
 
 9. Build a final map that overlays the recorded observations of wolves in the lower 48 states.  
 ```{r}
-
+ggmap(map_w)+
+  geom_point(data = wolves_lower48, aes(long, lat))
 ```
 
 
 10. Use the map from #9 above, but add some aesthetics. Try to `fill` and `color` by population.  
 ```{r}
-
+ggmap(map_w)+
+  geom_point(data = wolves_lower48, aes(long, lat, color=pop))+
+  labs(x="Longitude", y="Latitude", title="Wolf Populations", color="Population")
 ```
 
 
