@@ -7,9 +7,14 @@
  - practice_midterm1 contains a practice test
  - command_cheat_sheet contains an organized list of commands and other useful information learned in this class
 
-### Contact Me: 
+## Final Class Project Repository:
+https://github.com/AnandaLeia/Astro_Project_BIS15L 
+
+## Contact Me: 
 **School:**
 ksricketts@ucdavis.edu
 
 **Other:**
 katiesricketts@gmail.com
+
+
